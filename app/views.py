@@ -17,7 +17,11 @@ def home(request):
     Recordar que los listados deben pasarse en el contexto con las claves 'images' y 'favourite_list'.
     """
     images = []
+    personajes=services.getAllImages()
+    for personaje in personajes:
+        images.append(personaje)
     favourite_list = []
+    
 
     return render(request, 'home.html', { 'images': images, 'favourite_list': favourite_list })
 
@@ -29,7 +33,13 @@ def search(request):
     Se debe obtener el parámetro 'query' desde el POST, filtrar las imágenes según el nombre
     y renderizar 'home.html' con los resultados. Si no se ingresa nada, redirigir a 'home'.
     """
-    pass
+    query= request.POST.get('query').lower()
+    filtradoPorNombre=[]
+    personajes= services.getAllImages()
+    for personaje in personajes:
+        if personaje.status and personaje.lower() in query:
+            filtradoPorNombre.append(personaje)
+    return filtradoPorNombre
 
 def filter_by_status(request):
     """
@@ -39,7 +49,14 @@ def filter_by_status(request):
     Se debe obtener el parámetro 'status' desde el POST, filtrar las imágenes según ese estado
     y renderizar 'home.html' con los resultados. Si no hay estado, redirigir a 'home'.
     """
-    pass
+    filtradosPorEstado=[]
+    estado=request.POST.get('status').lower()
+    personajes = services.getAllImages()
+    for personaje in personajes:
+        if personaje.status and personaje.lower()==estado:
+            filtradosPorEstado.append(personaje)
+    return filtradosPorEstado
+    
 
 # Estas funciones se usan cuando el usuario está logueado en la aplicación.
 @login_required
