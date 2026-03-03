@@ -9,11 +9,24 @@ from django.contrib.auth import get_user
 def getAllImages():
     """
     Obtiene todas las imágenes de personajes desde la API y las convierte en objetos Card.
-    
+
     Esta función debe obtener los datos desde transport, transformarlos en Cards usando 
     translator y retornar una lista de objetos Card.
     """
-    pass
+    datos = transport.getAllImages()
+    cards=[]
+    for dato in datos:
+        card=translator.fromRequestIntoCard(dato)
+        cards.append(card)
+        
+    for card in cards:
+        if card.phrases and len(card.phrases)>0:
+            fraseCorta= card.phrases[0]
+            for frase in card.phrases:
+                if len(frase)< len(fraseCorta):
+                    fraseCorta=frase
+            card.phrases=fraseCorta
+    return cards
 
 def filterByCharacter(name):
     """
@@ -21,15 +34,26 @@ def filterByCharacter(name):
     
     Se debe filtrar los personajes cuyo nombre contenga el parámetro recibido. Retorna una lista de Cards filtradas.
     """
-    pass
+    cards= getAllImages()
+    cardsFiltradasSegunNombre=[]
+    for card in cards:
+        if card.name and name.lower() in card.name.lower():
+            cardsFiltradasSegunNombre.append(card)
+    return cardsFiltradasSegunNombre 
+
 
 def filterByStatus(status_name):
     """
     Filtra las cards de personajes según su estado (Alive/Deceased).
-    
+    .
     Se deben filtrar los personajes que tengan el estado igual al parámetro 'status_name'. Retorna una lista de Cards filtradas.
     """
-    pass
+    cards=getAllImages()
+    cardsFiltradasPorEstado=[]
+    for card in cards:
+        if card.status and card.status.lower() == status_name.lower():
+            cardsFiltradasPorEstado.append(card)
+    return cardsFiltradasPorEstado
 
 # añadir favoritos (usado desde el template 'home.html')
 def saveFavourite(request):
