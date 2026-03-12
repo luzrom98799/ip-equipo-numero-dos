@@ -51,7 +51,7 @@ def filterByStatus(status_name):
     cards=getAllImages()
     cardsFiltradasPorEstado=[]
     for card in cards:
-        if card.status and card.status.lower() == status_name.lower():
+        if card.status and card.status == status_name:
             cardsFiltradasPorEstado.append(card)
     return cardsFiltradasPorEstado
 

@@ -20,10 +20,7 @@ def home(request):
     personajes=services.getAllImages()
     for personaje in personajes:
         images.append(personaje)
-    favourite_list = []
-    
-
-    return render(request, 'home.html', { 'images': images, 'favourite_list': favourite_list })
+    return render(request, 'home.html', { 'images': images })
 
 def search(request):
     """
@@ -33,13 +30,16 @@ def search(request):
     Se debe obtener el parámetro 'query' desde el POST, filtrar las imágenes según el nombre
     y renderizar 'home.html' con los resultados. Si no se ingresa nada, redirigir a 'home'.
     """
-    query= request.POST.get('query').lower()
-    filtradoPorNombre=[]
-    personajes= services.getAllImages()
-    for personaje in personajes:
-        if personaje.status and personaje.lower() in query:
-            filtradoPorNombre.append(personaje)
-    return filtradoPorNombre
+    ingresado= request.POST.get('query').lower()
+    if not ingresado:
+        return redirect ('home')
+    if ingresado:
+        filtradoPorNombre=[]
+        cards= services.getAllImages()
+        for card in cards:
+            if card.name and ingresado in card.name.lower():
+                filtradoPorNombre.append(card)
+    return render (request, 'home.html',{'images': filtradoPorNombre})
 
 def filter_by_status(request):
     """
@@ -49,13 +49,15 @@ def filter_by_status(request):
     Se debe obtener el parámetro 'status' desde el POST, filtrar las imágenes según ese estado
     y renderizar 'home.html' con los resultados. Si no hay estado, redirigir a 'home'.
     """
-    filtradosPorEstado=[]
-    estado=request.POST.get('status').lower()
+    typeEstado=request.POST.get('status','').lower()
+    if not typeEstado:
+        return redirect('home')
     personajes = services.getAllImages()
+    filtrados=[]
     for personaje in personajes:
-        if personaje.status and personaje.lower()==estado:
-            filtradosPorEstado.append(personaje)
-    return filtradosPorEstado
+        if personaje.status and typeEstado==personaje.status.lower():
+            filtrados.append(personaje)
+    return render (request,'home.html', {'images': filtrados})
     
 
 # Estas funciones se usan cuando el usuario está logueado en la aplicación.
